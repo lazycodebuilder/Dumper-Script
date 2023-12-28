@@ -632,11 +632,11 @@ elif 7z l -ba "${FILEPATH}" | grep tar.md5 | gawk '{print $NF}' | grep -q AP_ 2>
 			printf "Extracted %s\n" "${f}"
 		done
 	}
+	for samsung_ext4_img_files in $(find -maxdepth 1 -type f -name \*.ext4 -printf '%P\n'); do
+		mv -v $samsung_ext4_img_files "${samsung_ext4_img_files%%.ext4}"
+	done
 	if [[ -f super.img ]]; then
 		superimage_extract || exit 1	
-	fi
-	if [[ -f system.img.ext4 ]]; then
-		find "${TMPDIR}" -maxdepth 1 -type f -name "*.img.ext4" | rename 's/.img.ext4/.img/g' > /dev/null 2>&1
 	fi
 	if [[ ! -f system.img ]]; then
 		printf "Extract failed\n"
@@ -947,6 +947,7 @@ codename=$(grep -m1 -oP "(?<=^ro.product.device=).*" -hs {vendor,system,system/s
 [[ -z "${codename}" ]] && codename=$(grep -m1 -oP "(?<=^ro.product.vendor.device=).*" -hs my_product/build*.prop)
 [[ -z "${codename}" ]] && codename=$(echo "$fingerprint" | cut -d'/' -f3 | cut -d':' -f1)
 [[ -z "${codename}" ]] && codename=$(grep -m1 -oP "(?<=^ro.build.fota.version=).*" -hs {system,system/system}/build*.prop | cut -d'-' -f1 | head -1)
+[[ -z "${codename}" ]] && codename=$(grep -oP "(?<=^ro.build.product=).*" -hs {vendor,system,system/system}/build*.prop | head -1)
 description=$(grep -m1 -oP "(?<=^ro.build.description=).*" -hs {system,system/system,vendor}/build*.prop | head -1)
 [[ -z "${description}" ]] && description=$(grep -m1 -oP "(?<=^ro.vendor.build.description=).*" -hs vendor/build*.prop)
 [[ -z "${description}" ]] && description=$(grep -m1 -oP "(?<=^ro.system.build.description=).*" -hs {system,system/system}/build*.prop)
@@ -1167,6 +1168,13 @@ if [[ -s "${PROJECT_DIR}"/.github_token ]]; then
 	printf "\nPushing to %s via HTTPS...\nBranch:%s\n" "https://github.com/${GIT_ORG}/${repo}.git" "${branch}"
 	sleep 1
 	git remote add origin https://${GITHUB_TOKEN}@github.com/${GIT_ORG}/${repo}.git "${branch}"
+	git lfs install
+	find . -type f -size +100M -exec git lfs track {} \;
+	[ -e ".gitattributes" ] && {
+		git add ".gitattributes"
+		git commit -sm "Setup Git LFS"
+		git push -u origin "${branch}"
+	}
 	git add -- . ':!system/' ':!vendor/'
 	git commit -sm "Add extras for ${description}"
 	git push -u origin "${branch}"
@@ -1299,6 +1307,13 @@ elif [[ -s "${PROJECT_DIR}"/.gitlab_token ]]; then
 	do
 		printf "\nPushing to %s via SSH...\nBranch:%s\n" "${GITLAB_HOST}/${GIT_ORG}/${repo}.git" "${branch}"
 		sleep 1
+		git lfs install
+		find . -type f -size +100M -exec git lfs track {} \;
+		[ -e ".gitattributes" ] && {
+			git add ".gitattributes"
+			git commit -sm "Setup Git LFS"
+			git push -u origin "${branch}"
+		}
 		git add -- . ':!system/' ':!vendor/'
 		git commit -sm "Add extras for ${description}"
 		git push -u origin "${branch}"

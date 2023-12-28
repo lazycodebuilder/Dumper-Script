@@ -48,8 +48,8 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	    sleep 1
 	    echo -e ${BLUE}">> Installing Required Packages..."${NORMAL}
 	    sleep 1
-        sudo apt install -y unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack arj cabextract device-tree-compiler liblzma-dev python3-pip brotli liblz4-tool axel gawk aria2 detox cpio rename liblz4-dev jq neofetch || abort "Setup Failed!"
-        sudo apt install -y aria2 arj brotli cabextract cmake device-tree-compiler gcc g++ git liblz4-tool liblzma-dev libtinyxml2-dev lz4 mpack openjdk-11-jdk p7zip-full p7zip-rar python3 python3-pip rar sharutils unace unrar unzip uudeview xz-utils zip zlib1g-dev || abort "Setup Failed!"
+        sudo apt install -y unace unrar zip unzip p7zip-full p7zip-rar sharutils rar uudeview mpack arj cabextract device-tree-compiler liblzma-dev python3-pip brotli liblz4-tool axel gawk aria2 detox cpio rename liblz4-dev jq neofetch git-lfs || abort "Setup Failed!"
+        sudo apt install -y aria2 arj brotli cabextract cmake device-tree-compiler gcc g++ git liblz4-tool liblzma-dev libtinyxml2-dev lz4 mpack openjdk-11-jdk p7zip-full p7zip-rar python3 python3-pip rar sharutils unace unrar unzip uudeview xz-utils zip zlib1g-dev git-lfs || abort "Setup Failed!"
 
  elif [[ "$(command -v dnf)" != "" ]]; then
         echo -e ${PURPLE}"Fedora Based Distro Detected"${NORMAL}
@@ -58,7 +58,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	    sleep 1
 
 	    # "dnf" automatically updates repos before installing packages
-        sudo dnf install -y unace unrar zip unzip sharutils uudeview arj cabextract file-roller dtc python3-pip brotli axel aria2 detox cpio lz4 python3-devel xz-devel p7zip p7zip-plugins || abort "Setup Failed!"
+        sudo dnf install -y unace unrar zip unzip sharutils uudeview arj cabextract file-roller dtc python3-pip brotli axel aria2 detox cpio lz4 python3-devel xz-devel p7zip p7zip-plugins git-lfs || abort "Setup Failed!"
 
     elif [[ "$(command -v pacman)" != "" ]]; then
         echo -e ${PURPLE}"Arch or Arch Based Distro Detected"${NORMAL}
@@ -67,7 +67,7 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 	    sleep 1
 
         sudo pacman -Syyu --needed --noconfirm 2>&1 | grep -v "warning: could not get file information" || abort "Setup Failed!"
-        sudo pacman -Sy --noconfirm unace unrar zip unzip p7zip sharutils uudeview arj cabextract file-roller dtc brotli axel gawk aria2 detox cpio lz4 jq || abort "Setup Failed!"
+        sudo pacman -Sy --noconfirm unace unrar zip unzip p7zip sharutils uudeview arj cabextract file-roller dtc brotli axel gawk aria2 detox cpio lz4 jq git-lfs || abort "Setup Failed!"
 
         # Python
         sleep 1
